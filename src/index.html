@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulario de Donaciones</title>
+    <script src="https://unpkg.com/near-api-js"></script>
+</head>
+<body>
+    <h1>Formulario de Donaciones</h1>
+    <form id="donationForm">
+        <label for="monto">Monto:</label>
+        <input type="text" id="monto" name="monto" required><br><br>
+        
+        <label for="fecha">Fecha:</label>
+        <input type="date" id="fecha" name="fecha" required><br><br>
+        
+        <label for="organizacion">Organización:</label>
+        <input type="text" id="organizacion" name="organizacion" required><br><br>
+
+        <button type="submit">Enviar Donación</button>
+    </form>
+
+    <script>
+        const { connect, keyStores, WalletConnection } = nearApi;
+
+        async function initNEAR() {
+            const near = await connect({
+                networkId: 'testnet',
+                keyStore: new keyStores.BrowserLocalStorageKeyStore(),
+                nodeUrl: 'https://rpc.testnet.near.org',
+                walletUrl: 'https://wallet.testnet.near.org',
+                helperUrl: 'https://helper.testnet.near.org',
+                explorerUrl: 'https://explorer.testnet.near.org',
+            });
+
+            const wallet = new WalletConnection(near);
+            return wallet;
+        }
+
+        document.getElementById('donationForm').addEventListener('submit', async function(event) {
+            event.preventDefault(); // Evita que se recargue la página
+
+            const wallet = await initNEAR();
+            if (!wallet.isSignedIn()) {
+                wallet.requestSignIn('contreras.testnet'); // Asegúrate de que el usuario esté autenticado
+            }
+
+            const monto = document.getElementById('monto').value;
+            const fecha = document.getElementById('fecha').value;
+            const organizacion = document.getElementById('organizacion').value;
+
+            const result = await wallet.account().functionCall({
+                contractId: 'contreras.testnet',
+                methodName: 'agregar_donacion',
+                args: {
+                    monto: monto,
+                    fecha: fecha,
+                    organizacion: organizacion
+                },
+                gas: '300000000000000', // Gas para la transacción
+                attachedDeposit: nearApi.utils.format.parseNearAmount('1'), // Deposito si es necesario
+            });
+
+            console.log('Donación agregada:', result);
+            alert('Donación agregada con éxito');
+        });
+    </script>
+</body>
+</html>

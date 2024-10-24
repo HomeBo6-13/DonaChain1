@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Formulario de Donaciones</title>
+</head>
+<body>
+  <h1>Registrar una Donación</h1>
+  <form id="donacion-form">
+    <label for="monto">Monto:</label>
+    <input type="text" id="monto" name="monto" required><br><br>
+
+    <label for="organizacion">Organización:</label>
+    <input type="text" id="organizacion" name="organizacion" required><br><br>
+
+    <label for="fecha">Fecha:</label>
+    <input type="date" id="fecha" name="fecha" required><br><br>
+
+    <button type="submit">Enviar Donación</button>
+  </form>
+
+  <p id="mensaje"></p>
+
+  <script>
+    document.getElementById("donacion-form").addEventListener("submit", async function(event) {
+      event.preventDefault();
+
+      const monto = document.getElementById("monto").value;
+      const organizacion = document.getElementById("organizacion").value;
+      const fecha = document.getElementById("fecha").value;
+
+      // Crear el objeto con los datos del formulario
+      const donacionData = {
+        monto: monto,
+        organizacion: organizacion,
+        fecha: fecha
+      };
+
+      // Enviar los datos al servidor para registrar la donación y desplegar el contrato
+      const response = await fetch("/enviar-donacion", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(donacionData),
+      });
+
+      const result = await response.json();
+      document.getElementById("mensaje").textContent = result.mensaje;
+    });
+  </script>
+</body>
+</html>

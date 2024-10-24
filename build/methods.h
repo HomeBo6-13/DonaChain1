@@ -1,0 +1,3 @@
+DEFINE_NEAR_METHOD(agregar_donacion)
+DEFINE_NEAR_METHOD(get_donacion_por_indice)
+DEFINE_NEAR_METHOD(get_donaciones)
