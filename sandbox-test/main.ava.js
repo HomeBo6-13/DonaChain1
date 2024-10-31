@@ -37,8 +37,8 @@ test('debe agregar una nueva donación', async (t) => {
     contractId: contract.accountId,
     methodName: 'agregar_donacion',
     args: {
+      nombre: 'Juan Pérez',
       monto: '300',
-      fecha: '2024-10-24',
       organizacion: 'Cruz Roja',
     },
     gas: '300000000000000', // Gas para la transacción
@@ -50,8 +50,9 @@ test('debe agregar una nueva donación', async (t) => {
   t.is(donaciones.length, 1); // Comprobar que hay una donación en el estado
   t.deepEqual(donaciones[0], {
     remitente: contract.accountId,
+    nombre: 'Juan Pérez',
     monto: '300',
-    fecha: '2024-10-24',
+    fecha: new Date().toISOString().split('T')[0], // La fecha actual en el formato correcto
     organizacion: 'Cruz Roja',
-  });
+  });
 });
